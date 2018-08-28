@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<style>
+
+   html {
+    color: #222;
+    font-size: 1em;
+    line-height: 1.4;
+    width: 1080px;
+    height: 1920px;
+}
+
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+h3{
+    margin: 5px 0px 0px 2px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+#banner {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    background-color: aqua;
+}
+
+#movies {
+    background: #ffffff;
+    padding: 20px 0;
+}
+
+#movieList {
+    display: flex;
+    flex-flow: wrap;
+    max-width: 1080px;
+    max-height:1920px;   
+    margin: auto;
+    background: #ffffff;
+    padding: 20px 0;
+    align-content: space-between;
+    justify-content: center;
+}
+
+#cmxbody {
+    width: fit-content;
+    margin: auto;
+}
+
+.main-header {
+    text-align: center;
+    
+}
+
+.movie {
+    display: flex;
+    flex-flow: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    justify-content: center;
+    width: 240px;
+    background-color: #ccc;
+    padding: 0;
+    margin: 10px;
+}
+.poster {
+    width: 240px;
+    height: 360px;
+}
+
+.titlecontainer {
+    height: 2.5rem;
+}
+
+.movieTitle {
+    padding: 0 0px;
+    padding-bottom: 0;
+    font-size: 1em;
+    /* text-align: center; */
+}
+.playingtoday {
+    font-family: Interstate,helvetica,arial,sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: .25em;
+    font-size: 12px;
+    font-size: .66667em;
+    color: #e40202;
+    width: 100%;
+    padding: 2px 0px 0px 10px;
+    /* margin: 8px; */
+}
+
+.sessions {
+    display: display;
+    padding: 20px 8px 20px 8px;
+    height: 6.5rem;
+    overflow: hidden;
+}
+
+#sessions::after {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+.movieTimeButton {
+    border: 2px black solid;
+    text-align: center;
+    height: 17px;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    vertical-align: center;
+}
+
+
+
+.movieTimeButton {
+    float: left;
+    width: 62px;
+    font-size: 12px;
+    margin: 2px;
+    vertical-align: middle;
+    padding: 2px;
+    line-height: 15px;
+}
+
+
+
+
+.rotate {
+    /* comment out this block to code to save your neck while making changes*/
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+    transform-origin: center;
+	margin: -420px 0 0 420px;
+	/*comment out this block to code to save your neck while making changes */	
+	width: 1080px;
+    height: 1920px;	
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow:hidden;
+}
+
+
+
+
+
+ 
+
+
+</style>
+<head>
+  <meta charset="utf-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <title>CMX</title>
+  <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet">
+</head>
+<!-- <header class="main-header" role="banner">
+  <img src="cmx.jpg" alt="banner image"/>
+</header> -->
+<body>
+<div class="rotate">
+        <img id="banner" src="cmx.jpg" alt="banner image"/>            
+    <h1 style="text-align: center">Fourth Floor South</h1>
+<div id="movieList"></div>
+</div>
+  <script>
+ var root = document.getElementById("movieList")
+
+var request = new XMLHttpRequest();
+request.open('GET', 'https://cors-anywhere.herokuapp.com/https://api.cmxcinemas.com/rest/v1/cinemas/10/movies', true);
+request.send();
+request.onload = function () {
+  var data = JSON.parse(this.response);
+  if (request.status >= 200 && request.status < 400) {
+  data.filter(todayMovieFilter).forEach(function (movie) {
+  var node = document.createElement("div")
+  node.classList.add("movie")
+  var poster = document.createElement("img")
+  poster.setAttribute("src", "https:" + movie.poster_small)
+  poster.classList.add("poster")
+  node.appendChild(poster)
+  // Title goes here
+  var titlecontainer = document.createElement("div");
+  titlecontainer.classList.add("titlecontainer");
+  var title = document.createElement("h3")
+  title.textContent = movie.name;
+  title.classList.add("movieTitle")
+  var subtitle = document.createElement("div")
+  subtitle.textContent = "Playing Today";
+  subtitle.classList.add("playingtoday");
+  titlecontainer.appendChild(title);
+  titlecontainer.appendChild(subtitle);
+  node.appendChild(titlecontainer);
+  var sessionsEl = document.createElement("div")
+  sessionsEl.classList.add("sessions")
+  node.appendChild(sessionsEl)
+  movie.sessions.filter(todaySessionFilter).forEach(function (session) {
+    var snode = document.createElement("a")
+    //snode.setAttribute("href", "https:" + movie.url + "/checkout/" + session.id)
+    snode.classList.add("movieTimeButton")
+    var ts = session.date * 1000
+    var dateTime = new Date(ts)
+    var ampm = "am"
+    var hours = dateTime.getHours()
+    if (hours > 12) {
+      hours -= 12
+      ampm = "pm"
+    }
+    else if (hours == 12) {
+      ampm = "pm"
+    }
+    var minutes = dateTime.getMinutes()
+    if (minutes < 10) {
+      minutes = "0" + minutes.toString()
+    }
+    snode.textContent = hours + ":" + minutes + " " + ampm
+    sessionsEl.appendChild(snode)
+  })
+
+  root.appendChild(node);
+})
+  } else {
+    const errorMessage = document.createElement('marquee');
+    errorMessage.textContent = `Gah, it's not working!`;
+    app.appendChild(errorMessage);
+  }
+
+function todayMovieFilter(movie) {
+  return movie.sessions.filter(todaySessionFilter).length
+}
+function todaySessionFilter(session) {
+  var now = new Date()
+  var tomorrowAt6 = new Date()
+  tomorrowAt6.setDate(now.getDate() + 1)
+  tomorrowAt6.setHours(6)
+  tomorrowAt6.setMinutes(0)
+  tomorrowAt6.setSeconds(0)
+  return (session.date * 1000) > now && (session.date * 1000) < tomorrowAt6
+}
+}
+  </script>
+ 
+</body>
+
+</html>
