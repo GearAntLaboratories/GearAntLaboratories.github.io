@@ -3,13 +3,22 @@
 <style>
 
    html {
-    color: #222;
     font-size: 1em;
     line-height: 1.4;
     width: 1080px;
     height: 1920px;
+    overflow: scroll;
+    overflow-x: hidden;
 }
 
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
 
 hr {
     display: block;
@@ -22,6 +31,7 @@ hr {
 
 h3{
     margin: 5px 0px 0px 2px;
+    font-size: 1em;
 }
 
 textarea {
@@ -32,7 +42,6 @@ textarea {
     margin-left: auto;
     margin-right: auto;
     display: block;
-    background-color: aqua;
 }
 
 #movies {
@@ -116,7 +125,7 @@ textarea {
 }
 
 .movieTimeButton {
-    border: 2px black solid;
+    border: 2px blue solid;
     text-align: center;
     height: 17px;
     text-decoration: none;
@@ -177,7 +186,7 @@ textarea {
 </header> -->
 <body>
 <div class="rotate">
-        <img id="banner" src="cmx.jpg" alt="banner image"/>            
+        <img id="banner" src="/cmx.png" alt="banner image"/>            
     <h1 style="text-align: center">Fourth Floor South</h1>
 <div id="movieList"></div>
 </div>
